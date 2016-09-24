@@ -16,14 +16,14 @@ class BukkitStart : AbstractMojo() {
 
     // Paperclip settings
     @field:Parameter(required = false)
-    private lateinit var serverType: ServerType
+    private var serverType: ServerType? = null
 
     @field:Parameter(required = false)
-    private lateinit var mcVersion: String
+    private var mcVersion: String? = null
 
     // Direct settings
     @field:Parameter(required = false)
-    private lateinit var url: URL
+    private var url: URL? = null
 
     // General settings
     @field:Parameter(defaultValue = "run", required = true)
