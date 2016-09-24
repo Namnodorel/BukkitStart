@@ -29,7 +29,7 @@ class BukkitStart : AbstractMojo() {
     @field:Parameter(defaultValue = "run", required = true)
     private lateinit var runDirectory: File
 
-    @field:Parameter(required = true)
+    @field:Parameter(required = false)
     private var acceptEula: Boolean? = null
 
     // Maven thing
