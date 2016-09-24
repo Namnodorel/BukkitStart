@@ -17,6 +17,9 @@ class BukkitStart : AbstractMojo() {
     private lateinit var server: ServerType
 
     @field:Parameter(required = true)
+    private lateinit var mcVersion: String
+
+    @field:Parameter(required = true)
     private var acceptEula: Boolean? = null
 
     @field:Parameter(defaultValue = "\${project}", readonly = true, required = true)
