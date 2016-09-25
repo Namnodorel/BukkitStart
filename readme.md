@@ -68,7 +68,7 @@ latest version of CraftBukkit, Spigot, and PAPER:
  * `LATEST_SPIGOT`
  * `LATEST_PAPER`
  
-If you want to test using other methods, run [BuildTools](https://www.spigotmc.org/wiki/buildtools/) to get the jar you want, and define
+If you want to test using other versions, run [BuildTools](https://www.spigotmc.org/wiki/buildtools/) to get the jar you want, and define
 it by replacing the `url` tag with a `file` tag, pointing to the location of the jar.
 
 An example project is available to look at [here](exmaple/) with a full `pom.xml` file.
