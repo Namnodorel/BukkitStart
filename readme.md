@@ -50,7 +50,7 @@ Setting up the `pom.xml` requires three parts:
      <version>1.0-SNAPSHOT</version>
      <configuration>
          <acceptEula>true</acceptEula>
-         <url>https://ci.destroystokyo.com/job/PaperSpigot/lastSuccessfulBuild/artifact/paperclip.jar</url>
+         <url>https://ci.demonwav.com/repository/download/Spigot_BuildTools/latest.lastSuccessful/craftbukkit-paperclip-1.10.2.jar</url>
      </configuration>
      <executions>
          <execution>
