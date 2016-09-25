@@ -1,4 +1,4 @@
-BukkitStart
+BukkitStartPlugin
 ===========
 
 Inspired by [SpongeStart](https://github.com/Qixalite/SpongeStart)

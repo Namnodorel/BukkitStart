@@ -1,6 +1,6 @@
 package com.demonwav.bukkitstart
 
-enum class Method {
+enum class StartMethod {
     PAPERCLIP,
     DIRECT
 }
