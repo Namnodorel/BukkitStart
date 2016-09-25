@@ -71,7 +71,7 @@ Setting up the `pom.xml` requires three parts:
  If you want to test using other versions, run [BuildTools](https://www.spigotmc.org/wiki/buildtools/) to get the jar you want, and define
  it by replacing the `url` tag with a `file` tag, pointing to the location of the jar.
 
-An example project is available to look at [here](exmaple/) with a full `pom.xml` file.
+An example project is available to look at [here](https://github.com/DemonWav/BukkitStart/tree/master/example) with a full `pom.xml` file.
 
 Once you have your `pom.xml` setup, run `mvn package` to setup your run directory. Now for step two, we need to setup the run config.
 
