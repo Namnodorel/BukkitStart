@@ -62,7 +62,7 @@ Setting up the `pom.xml` requires three parts:
  </plugin>
  ```
  The `url` tag here can be any url you want that points to a runnable jar file. There are also 3 convenience values you can use for the
- latest version of CraftBukkit, Spigot, and PAPER:
+ latest version of CraftBukkit, Spigot, and Paper under the [Paperclip](https://aquifermc.org/threads/paperclip.4/) distribution method:
  
   * `LATEST_CRAFTBUKKIT`
   * `LATEST_SPIGOT`
