@@ -61,15 +61,15 @@ Setting up the `pom.xml` requires three parts:
      </executions>
  </plugin>
  ```
-The `url` tag here can be any url you want that points to a runnable jar file. There are also 3 convenience values you can use for the
-latest version of CraftBukkit, Spigot, and PAPER:
-
- * `LATEST_CRAFTBUKKIT`
- * `LATEST_SPIGOT`
- * `LATEST_PAPER`
+ The `url` tag here can be any url you want that points to a runnable jar file. There are also 3 convenience values you can use for the
+ latest version of CraftBukkit, Spigot, and PAPER:
  
-If you want to test using other versions, run [BuildTools](https://www.spigotmc.org/wiki/buildtools/) to get the jar you want, and define
-it by replacing the `url` tag with a `file` tag, pointing to the location of the jar.
+  * `LATEST_CRAFTBUKKIT`
+  * `LATEST_SPIGOT`
+  * `LATEST_PAPER`
+  
+ If you want to test using other versions, run [BuildTools](https://www.spigotmc.org/wiki/buildtools/) to get the jar you want, and define
+ it by replacing the `url` tag with a `file` tag, pointing to the location of the jar.
 
 An example project is available to look at [here](exmaple/) with a full `pom.xml` file.
 
