@@ -4,6 +4,7 @@ import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugins.annotations.LifecyclePhase
 import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
+import org.apache.maven.project.MavenProject
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -24,6 +25,9 @@ class BukkitStartPlugin : AbstractMojo() {
 
     @field:Parameter(required = false)
     private var acceptEula: Boolean? = null
+
+    @field:Parameter(defaultValue = "\${project}", readonly = true, required = true)
+    private lateinit var project: MavenProject
 
     override fun execute() {
         setupDir()
@@ -67,6 +71,9 @@ class BukkitStartPlugin : AbstractMojo() {
         if (acceptEula == true && !eula.exists()) {
             eula.writeText("eula=true\n")
         }
+
+        val infoTxt = File(runDirectory, "info.txt")
+        infoTxt.writeText(project.artifact.file.absolutePath)
     }
 
     fun updateServer(url: URL) {

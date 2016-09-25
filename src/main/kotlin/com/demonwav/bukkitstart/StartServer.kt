@@ -14,11 +14,12 @@ import java.util.Stack
 import java.util.jar.JarInputStream
 
 fun main(args: Array<String> ) {
-    if (args.size != 1) {
-        error("Must give one argument: Path to the Artifact Jar.")
+    val infoTxt = File("info.txt")
+    if (!infoTxt.exists()) {
+        error("info.txt must exist! Have you run your Maven build yet?")
     }
 
-    val artifactJar = File(args[0])
+    val artifactJar = File(infoTxt.readText())
     if (!artifactJar.exists()) {
         error("Artifact Jar must exist.")
     }
@@ -50,7 +51,6 @@ fun runServer(artifactJar: File, runDirectory: File, serverJar: File, pluginDir:
 
     System.setProperty("user.dir", runDirectory.absolutePath)
 
-    // Paperclip code below
     // Get main class info from jar
     val main: String
     var fs: FileInputStream? = null
