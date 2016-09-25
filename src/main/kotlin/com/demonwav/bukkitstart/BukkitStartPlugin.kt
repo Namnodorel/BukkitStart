@@ -4,7 +4,6 @@ import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugins.annotations.LifecyclePhase
 import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
-import org.apache.maven.project.MavenProject
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -13,17 +12,9 @@ import java.nio.channels.Channels
 @Mojo(name = "setup-server", defaultPhase = LifecyclePhase.PACKAGE)
 class BukkitStartPlugin : AbstractMojo() {
 
-    @field:Parameter(defaultValue = "PAPERCLIP", required = true)
-    private lateinit var method: StartMethod
-
-    // Paperclip settings
     @field:Parameter(required = false)
-    private var serverType: ServerType? = null
+    private var file: File? = null
 
-    @field:Parameter(required = false)
-    private var mcVersion: String? = null
-
-    // Direct settings
     @field:Parameter(required = false)
     private var url: URL? = null
 
@@ -34,31 +25,31 @@ class BukkitStartPlugin : AbstractMojo() {
     @field:Parameter(required = false)
     private var acceptEula: Boolean? = null
 
-    // Maven thing
-    @field:Parameter(defaultValue = "\${project}", readonly = true, required = true)
-    private lateinit var project: MavenProject
-
     override fun execute() {
-        if (method == StartMethod.DIRECT) {
-            TODO()
+        setupDir()
+
+        if (url == null && file == null) {
+            log.error("Either url or file must be set.")
+            return
+        }
+
+        if (url != null && file != null) {
+            log.warn("Both url and file were set, using url.")
         }
 
         if (url != null) {
-            TODO()
+            updateServer(url!!)
+        } else {
+            updateServer(file!!.toURI().toURL())
         }
+    }
 
-        if (serverType != ServerType.PAPER) {
-            TODO()
-        }
-
-        if (mcVersion != "1.10.2") {
-            TODO()
-        }
-
+    fun setupDir() {
         if (!runDirectory.exists()) {
             val successful = runDirectory.mkdirs()
             if (!successful) {
-                TODO()
+                log.error("Could not create run directory at: " + runDirectory.absolutePath)
+                return
             }
         }
 
@@ -66,7 +57,8 @@ class BukkitStartPlugin : AbstractMojo() {
         if (!pluginDir.exists()) {
             val successful = pluginDir.mkdirs()
             if (!successful) {
-                TODO()
+                log.error("Could not create plugins directory at: " + pluginDir.absolutePath)
+                return
             }
         }
 
@@ -75,15 +67,13 @@ class BukkitStartPlugin : AbstractMojo() {
         if (acceptEula == true && !eula.exists()) {
             eula.writeText("eula=true\n")
         }
-
-        val serverJar = File(runDirectory, "server.jar")
-        updatePaperclip(serverJar)
     }
 
-    fun updatePaperclip(serverJar: File) {
+    fun updateServer(url: URL) {
+        val serverJar = File(runDirectory, "server.jar")
+
         if (!serverJar.exists()) {
-            val downloadUrl = URL("https://ci.destroystokyo.com/job/PaperSpigot/lastSuccessfulBuild/artifact/paperclip.jar")
-            val connection = downloadUrl.openConnection()
+            val connection = url.openConnection()
 
             // Dirty, dirty, dirty...
             System.setProperty("http.agent", "")
