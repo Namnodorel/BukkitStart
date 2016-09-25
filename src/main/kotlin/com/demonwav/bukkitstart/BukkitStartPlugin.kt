@@ -7,6 +7,7 @@ import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.project.MavenProject
 import java.io.File
 import java.io.FileOutputStream
+import java.net.MalformedURLException
 import java.net.URL
 import java.nio.channels.Channels
 
@@ -17,7 +18,7 @@ class BukkitStartPlugin : AbstractMojo() {
     private var file: File? = null
 
     @field:Parameter(required = false)
-    private var url: URL? = null
+    private var url: String? = null
 
     // General settings
     @field:Parameter(defaultValue = "run", required = true)
@@ -42,7 +43,18 @@ class BukkitStartPlugin : AbstractMojo() {
         }
 
         if (url != null) {
-            updateServer(url!!)
+            try {
+                val urlInst = when (url) {
+                    "LATEST_CRAFTBUKKIT" -> URL("https://ci.demonwav.com/repository/download/Spigot_BuildTools/latest.lastSuccessful/craftbukkit-paperclip-1.10.2.jar")
+                    "LATEST_SPIGOT" -> URL("https://ci.demonwav.com/repository/download/Spigot_BuildTools/latest.lastSuccessful/spigot-paperclip-1.10.2.jar")
+                    "LATEST_PAPER" -> URL("https://ci.destroystokyo.com/job/PaperSpigot/lastSuccessfulBuild/artifact/paperclip.jar")
+                    else -> URL(url)
+                }
+
+                updateServer(urlInst)
+            } catch (e: MalformedURLException) {
+                log.error("url must be a valid url or LATEST_CRAFTBUKKIT, LATEST_SPIGOT, or LATEST_PAPER")
+            }
         } else {
             updateServer(file!!.toURI().toURL())
         }

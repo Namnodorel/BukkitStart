@@ -50,7 +50,7 @@ Setting up the `pom.xml` requires three parts:
      <version>1.0-SNAPSHOT</version>
      <configuration>
          <acceptEula>true</acceptEula>
-         <url>https://ci.demonwav.com/repository/download/Spigot_BuildTools/latest.lastSuccessful/craftbukkit-paperclip-1.10.2.jar</url>
+         <url>LATEST_SPIGOT</url>
      </configuration>
      <executions>
          <execution>
@@ -61,14 +61,13 @@ Setting up the `pom.xml` requires three parts:
      </executions>
  </plugin>
  ```
-The `url` tag here can be any url you want that points to a runnable jar file. I host runnable versions of the latest builds of `Bukkit` and
-`Spigot` (currently Minecraft version 1.10.2) using the [Paperclip](https://aquifermc.org/threads/paperclip.4/) distribution method in the
-following locations, and `Paper` is hosted by the Paper team on their own CI:
+The `url` tag here can be any url you want that points to a runnable jar file. There are also 3 convenience values you can use for the
+latest version of CraftBukkit, Spigot, and PAPER:
 
- * CraftBukkit: https://ci.demonwav.com/repository/download/Spigot_BuildTools/latest.lastSuccessful/craftbukkit-paperclip-1.10.2.jar
- * Spigot: https://ci.demonwav.com/repository/download/Spigot_BuildTools/latest.lastSuccessful/spigot-paperclip-1.10.2.jar
- * Paper: https://ci.destroystokyo.com/job/PaperSpigot/lastSuccessfulBuild/artifact/paperclip.jar
-
+ * `LATEST_CRAFTBUKKIT`
+ * `LATEST_SPIGOT`
+ * `LATEST_PAPER`
+ 
 If you want to test using other methods, run [BuildTools](https://www.spigotmc.org/wiki/buildtools/) to get the jar you want, and define
 it by replacing the `url` tag with a `file` tag, pointing to the location of the jar.
 
