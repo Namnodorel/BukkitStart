@@ -106,7 +106,7 @@ fun runServer(artifactJar: File, runDirectory: File, serverJar: File, pluginDir:
     // Oh, and also remove myself from the classpath.....
     val pathUrl = ArrayList<URL>()
     for (p in path) {
-        if (p.toString().contains("maven/target") || p.toString().contains("bukkitstart")) {
+        if (p.toString().contains("target/classes") || p.toString().contains("bukkitstart")) {
             pathUrl.add(p)
         }
     }
