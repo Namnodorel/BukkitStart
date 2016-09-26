@@ -32,7 +32,7 @@ Setting up the `pom.xml` requires four parts:
      </repository>
  </repositories>
  ```
- 2. The plugin repository. This is how Maven find the Maven plugin. They are the same thing, but Maven doesn't know that.
+ 2. The plugin repository. This is how Maven finds the Maven plugin. They are the same as above, but Maven doesn't know that.
  
  ```xml
  <pluginRepositories>
