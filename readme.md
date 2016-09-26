@@ -20,28 +20,42 @@ There are 2 steps:
  1. Setting up the `pom.xml`
  2. Setting up the run config
 
-Setting up the `pom.xml` requires three parts:
+Setting up the `pom.xml` requires four parts:
 
- 1. The repository. This is how Maven finds the Maven plugin to use:
+ 1. The repository. This is how Maven finds the start dependency to use:
  
  ```xml
- <repository>
-     <id>demonwav</id>
-     <url>https://nexus.demonwav.com/content/repositories/snapshots/</url>
- </repository>
+ <repositories>
+     <repository>
+         <id>demonwav</id>
+         <url>https://nexus.demonwav.com/content/repositories/snapshots/</url>
+     </repository>
+ </repositories>
  ```
- 
- 2. The dependency. This is how we get the `StartServer` class which we use in the run config.
+ 2. The plugin repository. This is how Maven find the Maven plugin. They are the same thing, but Maven doesn't know that.
  
  ```xml
- <dependency>
-     <groupId>com.demonwav</groupId>
-     <artifactId>bukkitstart</artifactId>
-     <version>1.0-SNAPSHOT</version>
-     <scope>runtime</scope>
- </dependency>
+ <pluginRepositories>
+     <pluginRepository>
+         <id>demonwav</id>
+         <url>https://nexus.demonwav.com/content/repositories/snapshots/</url>
+     </pluginRepository>
+ </pluginRepositories>
  ```
- 3. The plugin. This is how we get the run directory setup in the `Maven` build process.
+ 
+ 3. The dependency. This is how we get the `StartServer` class which we use in the run config.
+ 
+ ```xml
+ <dependencies>
+     <dependency>
+         <groupId>com.demonwav</groupId>
+         <artifactId>bukkitstart</artifactId>
+         <version>1.0-SNAPSHOT</version>
+         <scope>runtime</scope>
+     </dependency>
+ </dependencies>
+ ```
+ 4. The plugin. This is how we get the run directory setup in the `Maven` build process.
  
  ```xml
  <plugin>

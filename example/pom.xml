@@ -82,6 +82,12 @@
             <url>https://nexus.demonwav.com/content/repositories/snapshots/</url>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>demonwav</id>
+            <url>https://nexus.demonwav.com/content/repositories/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <dependency>
