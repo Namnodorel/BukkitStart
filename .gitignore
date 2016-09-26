@@ -172,3 +172,7 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+example/
+!example/pom.xml
+!example/src
