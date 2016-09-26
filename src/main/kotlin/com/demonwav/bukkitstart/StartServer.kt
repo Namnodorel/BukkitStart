@@ -99,15 +99,16 @@ fun runServer(artifactJar: File, runDirectory: File, serverJar: File, pluginDir:
     val path = pathField.get(ucp) as ArrayList<URL>
 
     // Remove this module's classpath from the list of paths
-    var pathUrl: URL? = null
+    // Oh, and also remove myself from the classpath.....
+    val pathUrl = ArrayList<URL>()
     for (p in path) {
-        if (p.toString().contains("maven/target")) {
-            pathUrl = p
-            break
+        if (p.toString().contains("maven/target") || p.toString().contains("bukkitstart")) {
+            pathUrl.add(p)
         }
     }
-    if (pathUrl != null) {
-        path.remove(pathUrl)
+
+    if (!pathUrl.isEmpty()) {
+        path.removeAll(pathUrl)
         urls.empty()
 
         path.forEach { urls.add(0, it) }
