@@ -4,7 +4,6 @@ package com.demonwav.bukkitstart
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
-import java.lang.reflect.Method
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLClassLoader
@@ -149,7 +148,7 @@ fun runServer(artifactJar: File, runDirectory: File, serverJar: File, pluginDir:
     try {
         val cls = Class.forName(main, true, loader)
         val m = cls.getMethod("main", Array<String>::class.java)
-        
+
         m.invoke(null, arrayOf<String>())
     } catch (e: Exception) {
         e.printStackTrace()
