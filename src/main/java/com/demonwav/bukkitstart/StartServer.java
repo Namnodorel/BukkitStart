@@ -35,8 +35,10 @@ public class StartServer {
 
         final File runDirectory = new File(".");
         if (!runDirectory.exists()) {
-            System.err.println("Run Directory must exist.");
-            return;
+            if (!runDirectory.mkdirs()) {
+                System.err.println("Run Directory does not exist and could not be created.");
+                return;
+            }
         }
 
         final File serverJar = new File(runDirectory, "server.jar");
@@ -47,8 +49,10 @@ public class StartServer {
 
         final File pluginDir = new File(runDirectory, "plugins");
         if (!pluginDir.exists()) {
-            System.err.println("plugins/ directory must exist in Run Directory.");
-            return;
+            if (!pluginDir.mkdirs()) {
+                System.err.println("plugins/ directory does not exist in the Run Directory and could not be created.");
+                return;
+            }
         }
 
         runServer(pluginDir, artifactJar, serverJar);
