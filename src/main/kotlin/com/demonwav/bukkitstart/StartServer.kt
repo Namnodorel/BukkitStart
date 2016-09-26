@@ -10,6 +10,7 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.nio.file.Files
 import java.util.ArrayList
+import java.util.HashMap
 import java.util.Stack
 import java.util.jar.JarInputStream
 
@@ -48,8 +49,6 @@ fun runServer(artifactJar: File, runDirectory: File, serverJar: File, pluginDir:
 
     plugin.delete()
     Files.copy(artifactJar.toPath(), plugin.toPath())
-
-    System.setProperty("user.dir", runDirectory.absolutePath)
 
     // Get main class info from jar
     val main: String
@@ -91,12 +90,18 @@ fun runServer(artifactJar: File, runDirectory: File, serverJar: File, pluginDir:
 
     val urlsField = ucp.javaClass.getDeclaredField("urls")
     val pathField = ucp.javaClass.getDeclaredField("path")
+    val lmapField = ucp.javaClass.getDeclaredField("lmap")
+    val loadersField = ucp.javaClass.getDeclaredField("loaders")
 
     urlsField.isAccessible = true
     pathField.isAccessible = true
+    lmapField.isAccessible = true
+    loadersField.isAccessible = true
 
     val urls = urlsField.get(ucp) as Stack<URL>
     val path = pathField.get(ucp) as ArrayList<URL>
+    val lmap = lmapField.get(ucp) as HashMap<String, Any>
+    val loaders = loadersField.get(ucp) as ArrayList<Any>
 
     // Remove this module's classpath from the list of paths
     // Oh, and also remove myself from the classpath.....
@@ -111,7 +116,19 @@ fun runServer(artifactJar: File, runDirectory: File, serverJar: File, pluginDir:
         path.removeAll(pathUrl)
         urls.empty()
 
-        path.forEach { urls.add(0, it) }
+        for (p in path) {
+            urls.add(0, p)
+        }
+
+        for (p in pathUrl) {
+            val any = lmap.remove("file://${p.file}")
+            // Clear the loaders
+            // This is the magic. The module classes are already loaded at this point
+            // Clearing this will force the classloader to refer back to the URL list to find the class
+            // Since we removed this module's URL from the URL list, it won't be able to find the conflicting classes
+            // and Bukkit will be able to load the classes in it's own classloader
+            loaders.remove(any)
+        }
     }
 
     // re-enable lookup cache (the addURL will disable it)
@@ -128,22 +145,11 @@ fun runServer(artifactJar: File, runDirectory: File, serverJar: File, pluginDir:
     lookupCacheLoaderField.isAccessible = true
     lookupCacheLoaderField.set(ucp, null)
 
-    // Clear the loaders
-    // This is the magic. The module classes are already loaded at this point
-    // Clearing this will force the classloader to refer back to the URL list to find the class
-    // Since we removed this module's URL from the URL list, it won't be able to find the conflicting classes
-    // and Bukkit will be able to load the classes in it's own classloader
-    val loadersField = ucp.javaClass.getDeclaredField("loaders")
-    loadersField.isAccessible = true
-    loadersField.set(ucp, ArrayList<Any>())
 
-
-    val cls: Class<*>
-    val m: Method
     try {
-        cls = Class.forName(main, true, loader)
-        m = cls.getMethod("main", Array<String>::class.java)
-
+        val cls = Class.forName(main, true, loader)
+        val m = cls.getMethod("main", Array<String>::class.java)
+        
         m.invoke(null, arrayOf<String>())
     } catch (e: Exception) {
         e.printStackTrace()
