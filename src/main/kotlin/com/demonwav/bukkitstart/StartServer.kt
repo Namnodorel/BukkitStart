@@ -3,7 +3,6 @@ package com.demonwav.bukkitstart
 
 import java.io.File
 import java.io.FileInputStream
-import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLClassLoader
@@ -39,36 +38,26 @@ fun main(args: Array<String> ) {
         error("plugins/ directory must exist in Run Directory.")
     }
 
-    runServer(artifactJar, runDirectory, serverJar, pluginDir)
+    runServer(artifactJar, serverJar, pluginDir)
 }
 
 @Suppress("UNCHECKED_CAST")
-fun runServer(artifactJar: File, runDirectory: File, serverJar: File, pluginDir: File) {
+fun runServer(artifactJar: File, serverJar: File, pluginDir: File) {
     val plugin = File(pluginDir, "plugin.jar")
 
     plugin.delete()
     Files.copy(artifactJar.toPath(), plugin.toPath())
 
     // Get main class info from jar
-    val main: String
-    var fs: FileInputStream? = null
-    var js: JarInputStream? = null
-    try {
-        fs = FileInputStream(serverJar)
-        js = JarInputStream(fs)
-        main = js.manifest.mainAttributes.getValue("Main-Class")
-    } catch (e: IOException) {
-        e.printStackTrace()
-        error("Error reading from jar")
-    } finally {
-        fs?.close()
-        js?.close()
-    }
+    val main = FileInputStream(serverJar).use { fs ->
+        JarInputStream(fs).use { js ->
+            js.manifest.mainAttributes.getValue("Main-Class")
+        }
+    } ?: error("Error reading from jar")
 
     // Run the jar
-    val url: URL
-    try {
-        url = serverJar.toURI().toURL()
+    val url = try {
+        serverJar.toURI().toURL()
     } catch (e: MalformedURLException) {
         e.printStackTrace()
         error("Error reading path to jar")
