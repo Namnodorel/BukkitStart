@@ -12,6 +12,7 @@ import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 import java.util.jar.JarInputStream;
@@ -104,12 +105,18 @@ public class StartServer {
 
         final Field urlsField = ucp.getClass().getDeclaredField("urls");
         final Field pathField = ucp.getClass().getDeclaredField("path");
+        final Field lmapField = ucp.getClass().getDeclaredField("lmap");
+        final Field loadersField = ucp.getClass().getDeclaredField("loaders");
 
         urlsField.setAccessible(true);
         pathField.setAccessible(true);
+        lmapField.setAccessible(true);
+        loadersField.setAccessible(true);
 
         final Stack<URL> urls = (Stack<URL>) urlsField.get(ucp);
         final ArrayList<URL> path = (ArrayList<URL>) pathField.get(ucp);
+        final HashMap<String, Object> lmap = (HashMap<String, Object>) lmapField.get(ucp);
+        final ArrayList<Object> loaders = (ArrayList<Object>) loadersField.get(ucp);
 
         // Remove this module's classpath from the list of paths
         // Oh, and also remove myself from the classpath.....
@@ -123,6 +130,16 @@ public class StartServer {
 
             for (URL p: path) {
                 urls.add(0, p);
+            }
+
+            // Remove the necessary loaders
+            // This is the magic. The module classes are already loaded at this point
+            // Clearing this will force the classloader to refer back to the URL list to find the class
+            // Since we removed this module's URL from the URL list, it won't be able to find the conflicting classes
+            // and Bukkit will be able to load the classes in it's own classloader
+            for (URL p: pathUrl) {
+                final Object o = lmap.remove("file://" + p.getFile());
+                loaders.remove(o);
             }
         }
 
@@ -139,15 +156,6 @@ public class StartServer {
         final Field lookupCacheLoaderField = ucp.getClass().getDeclaredField("lookupCacheLoader");
         lookupCacheLoaderField.setAccessible(true);
         lookupCacheLoaderField.set(ucp, null);
-
-        // Clear the loaders
-        // This is the magic. The module classes are already loaded at this point
-        // Clearing this will force the classloader to refer back to the URL list to find the class
-        // Since we removed this module's URL from the URL list, it won't be able to find the conflicting classes
-        // and Bukkit will be able to load the classes in it's own classloader
-        final Field loadersField = ucp.getClass().getDeclaredField("loaders");
-        loadersField.setAccessible(true);
-        loadersField.set(ucp, new ArrayList());
 
 
         try {
