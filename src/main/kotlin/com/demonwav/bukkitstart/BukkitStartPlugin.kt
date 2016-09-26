@@ -24,8 +24,8 @@ class BukkitStartPlugin : AbstractMojo() {
     @field:Parameter(defaultValue = "run", required = true)
     private lateinit var runDirectory: File
 
-    @field:Parameter(required = false)
-    private var acceptEula: Boolean? = null
+    @field:Parameter(defaultValue = "false", required = false)
+    private var acceptEula: Boolean = false
 
     @field:Parameter(defaultValue = "\${project}", readonly = true, required = true)
     private lateinit var project: MavenProject
@@ -33,7 +33,7 @@ class BukkitStartPlugin : AbstractMojo() {
     override fun execute() {
         setupDir()
 
-        if (url == null && file == null) {
+       if (url == null && file == null) {
             log.error("Either url or file must be set.")
             return
         }
@@ -80,7 +80,7 @@ class BukkitStartPlugin : AbstractMojo() {
 
         val eula = File(runDirectory, "eula.txt")
 
-        if (acceptEula == true && !eula.exists()) {
+        if (acceptEula && !eula.exists()) {
             eula.writeText("eula=true\n")
         }
 
