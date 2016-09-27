@@ -96,11 +96,6 @@ public class StartServer {
             return;
         }
 
-        // Add the url to the current system classloader
-        final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-        addUrl.setAccessible(true);
-        addUrl.invoke(loader, url);
-
 
         // Remove the current module from the classpath
         final Field ucpField = URLClassLoader.class.getDeclaredField("ucp");
@@ -123,9 +118,10 @@ public class StartServer {
         final ArrayList<Object> loaders = (ArrayList<Object>) loadersField.get(ucp);
 
         // Remove this module's classpath from the list of paths
+        // Also remove maven dependencies
         // Oh, and also remove myself from the classpath.....
         final List<URL> pathUrl = path.stream()
-            .filter(p -> p.toString().contains("maven/target") || p.toString().contains("bukkitstart"))
+            .filter(p -> p.toString().contains("target/classes") || p.toString().contains("bukkitstart") || p.toString().contains(".m2"))
             .collect(Collectors.toList());
 
         if (!pathUrl.isEmpty()) {
@@ -160,6 +156,11 @@ public class StartServer {
         final Field lookupCacheLoaderField = ucp.getClass().getDeclaredField("lookupCacheLoader");
         lookupCacheLoaderField.setAccessible(true);
         lookupCacheLoaderField.set(ucp, null);
+
+        // Add the url to the current system classloader
+        final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+        addUrl.setAccessible(true);
+        addUrl.invoke(loader, url);
 
 
         try {
