@@ -91,7 +91,7 @@ Once you have your `pom.xml` setup, run `mvn package` to setup your run director
 
 The run config should be a normal "Java Application" run config, with the following parameters:
 
- 1. Main class: `com.demonwav.bukkitstart.StartServer`
+ 1. Main class: `StartServer`
  2. Working directory: The working directory you either defined in the `pom.xml`, or was just the default `run` directory.
  3. (Optional) For optimal convenience, configure the `mvn package` run config to run before launch.
 
