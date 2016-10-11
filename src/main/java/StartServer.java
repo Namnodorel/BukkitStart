@@ -1,3 +1,4 @@
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -112,8 +113,8 @@ public class StartServer {
 
         final Stack<URL> urls = (Stack<URL>) urlsField.get(ucp);
         final ArrayList<URL> path = (ArrayList<URL>) pathField.get(ucp);
-        final HashMap<String, Object> lmap = (HashMap<String, Object>) lmapField.get(ucp);
-        final ArrayList<Object> loaders = (ArrayList<Object>) loadersField.get(ucp);
+        final HashMap<String, Closeable> lmap = (HashMap<String, Closeable>) lmapField.get(ucp);
+        final ArrayList<Closeable> loaders = (ArrayList<Closeable>) loadersField.get(ucp);
 
         // Remove this module's classpath from the list of paths
         // Also remove maven dependencies
@@ -136,10 +137,27 @@ public class StartServer {
             // Since we removed this module's URL from the URL list, it won't be able to find the conflicting classes
             // and Bukkit will be able to load the classes in it's own classloader
             for (URL p: pathUrl) {
-                final Object o = lmap.remove("file://" + p.getFile());
-                loaders.remove(o);
+                final Closeable o = lmap.remove("file://" + p.getFile());
+                if (o != null) {
+                    loaders.remove(o);
+                    o.close();
+                }
             }
         }
+
+        // Add the url to the current system classloader
+        final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+        addUrl.setAccessible(true);
+        addUrl.invoke(loader, url);
+
+        // We need to create the loader for this url
+        final Method getLoader = ucp.getClass().getDeclaredMethod("getLoader", URL.class);
+        getLoader.setAccessible(true);
+        final Closeable newLoader = (Closeable) getLoader.invoke(ucp, url);
+
+        // Add to loaders and lmap
+        loaders.add(newLoader);
+        lmap.put("file://" + url.getFile(), newLoader);
 
         // re-enable lookup cache (the addURL will disable it)
         final Field lookupCacheEnabledField = ucp.getClass().getDeclaredField("lookupCacheEnabled");
@@ -154,11 +172,6 @@ public class StartServer {
         final Field lookupCacheLoaderField = ucp.getClass().getDeclaredField("lookupCacheLoader");
         lookupCacheLoaderField.setAccessible(true);
         lookupCacheLoaderField.set(ucp, null);
-
-        // Add the url to the current system classloader
-        final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-        addUrl.setAccessible(true);
-        addUrl.invoke(loader, url);
 
 
         try {
