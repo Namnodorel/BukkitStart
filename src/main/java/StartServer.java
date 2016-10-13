@@ -116,6 +116,12 @@ public class StartServer {
         final HashMap<String, Closeable> lmap = (HashMap<String, Closeable>) lmapField.get(ucp);
         final ArrayList<Closeable> loaders = (ArrayList<Closeable>) loadersField.get(ucp);
 
+        System.out.println("init:");
+        System.out.println(urls);
+        System.out.println(path);
+        System.out.println(lmap);
+        System.out.println(loaders);
+
         // Remove this module's classpath from the list of paths
         // Also remove maven dependencies
         // Oh, and also remove myself from the classpath.....
@@ -123,9 +129,11 @@ public class StartServer {
             .filter(p -> p.toString().contains("target/classes") || p.toString().contains("bukkitstart") || p.toString().contains(".m2"))
             .collect(Collectors.toList());
 
+        System.out.println("pathUrl" + pathUrl);
+
         if (!pathUrl.isEmpty()) {
             path.removeAll(pathUrl);
-            urls.empty();
+            urls.clear();
 
             for (URL p: path) {
                 urls.add(0, p);
@@ -139,11 +147,18 @@ public class StartServer {
             for (URL p: pathUrl) {
                 final Closeable o = lmap.remove("file://" + p.getFile());
                 if (o != null) {
+                    System.out.println("remove: " + p + " " + o);
                     loaders.remove(o);
                     o.close();
                 }
             }
         }
+
+        System.out.println("after remove:");
+        System.out.println(urls);
+        System.out.println(path);
+        System.out.println(lmap);
+        System.out.println(loaders);
 
         // Add the url to the current system classloader
         final Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
@@ -173,6 +188,11 @@ public class StartServer {
         lookupCacheLoaderField.setAccessible(true);
         lookupCacheLoaderField.set(ucp, null);
 
+        System.out.println("after add:");
+        System.out.println(urls);
+        System.out.println(path);
+        System.out.println(lmap);
+        System.out.println(loaders);
 
         try {
             final Class<?> cls = Class.forName(main, true, loader);
