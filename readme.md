@@ -50,7 +50,7 @@ Setting up the `pom.xml` requires four parts:
      <dependency>
          <groupId>com.demonwav</groupId>
          <artifactId>bukkitstart</artifactId>
-         <version>1.0-SNAPSHOT</version>
+         <version>1.1-SNAPSHOT</version>
          <scope>runtime</scope>
      </dependency>
  </dependencies>
@@ -61,7 +61,7 @@ Setting up the `pom.xml` requires four parts:
  <plugin>
      <groupId>com.demonwav</groupId>
      <artifactId>bukkitstart</artifactId>
-     <version>1.0-SNAPSHOT</version>
+     <version>1.1-SNAPSHOT</version>
      <configuration>
          <acceptEula>true</acceptEula>
          <url>LATEST_SPIGOT</url>
