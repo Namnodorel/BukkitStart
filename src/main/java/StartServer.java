@@ -10,16 +10,14 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
 
 public class StartServer {
     public static void main(String[] args)
             throws IOException, NoSuchMethodException, NoSuchFieldException, IllegalAccessException, InvocationTargetException {
+
         final File infoTxt = new File("info.txt");
         if (!infoTxt.exists()) {
             System.err.println("info.txt must exist! Have you run your Maven build yet?");
@@ -54,14 +52,19 @@ public class StartServer {
             }
         }
 
-        runServer(pluginDir, artifactJar, serverJar);
+        String pluginFileName = "plugin.jar";
+        if(args.length > 0){
+            pluginFileName = args[0];
+        }
+
+        runServer(pluginDir, pluginFileName, artifactJar, serverJar);
     }
 
     @SuppressWarnings("unchecked")
-    private static void runServer(final File pluginDir, final File artifactJar, final File serverJar)
+    private static void runServer(final File pluginDir, final String pluginFileName, final File artifactJar, final File serverJar)
         throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException, IOException {
 
-        final File plugin = new File(pluginDir, "plugin.jar");
+        final File plugin = new File(pluginDir, pluginFileName);
 
         //noinspection ResultOfMethodCallIgnored
         plugin.delete();
